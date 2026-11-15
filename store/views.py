@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegisterForm, ProductForm
 from .models import Product
@@ -159,19 +159,19 @@ def product_delete(request, pk):
 # =========================
 @login_required
 def cart_detail(request):
-    cart = Cart.objects.get(user=request.user)
+    cart, created = Cart.objects.get_or_create(user=request.user)
 
-    return render(request, 'marketplace/cart_detail.html', {
+    return render(request, 'store/cart_detail.html', {
         'cart': cart
     })
 
 
-# =========================
+# ==============================
 # ➕ Agregar producto
-# =========================
+# ==============================
 @login_required
 def add_to_cart(request, product_id):
-    cart = Cart.objects.get(user=request.user)
+    cart, created = Cart.objects.get_or_create(user=request.user)
 
     product = get_object_or_404(Product, id=product_id)
 
